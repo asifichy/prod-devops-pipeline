@@ -1,0 +1,20 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "backend of the codebase",
+  "homepage": "https://github.com/asifichy/prod-devops-pipeline#readme",
+  "bugs": {
+    "url": "https://github.com/asifichy/prod-devops-pipeline/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asifichy/prod-devops-pipeline.git"
+  },
+  "license": "ISC",
+  "author": "Md. Asif Imtiyaj Chowdhury",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
