@@ -1,0 +1,61 @@
+# CI workflow to build, test, and lint the CRUD app on push or pull request
+name: CI Pipeline
+on:
+  push:
+    branches: [main] # Trigger on pushes to main branch
+  # pull_request:
+  #   branches: [main] # Trigger on PRs to main branch
+  workflow_dispatch: # Allow manual triggering of the workflow
+    inputs:
+      branch:
+        description: "Branch to run workflow on"
+        required: true
+        default: "main"
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch }}
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - run: npm ci  # Clean install of dependencies
+
+  test:
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch }}
+      - run: npm test  # Run test suite
+
+  lint:
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch }}
+      - run: npm run lint  # Run linting checks
+
+  docker-build:
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch }}
+      - name: Build Docker image
+        run: |
+          # Enable BuildKit for parallel and more efficient builds
+          DOCKER_BUILDKIT=1 docker build -t myapp:latest
